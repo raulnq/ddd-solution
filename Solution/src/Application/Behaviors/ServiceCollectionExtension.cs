@@ -1,0 +1,21 @@
+﻿using MediatR;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace Application
+{
+    public static partial class ServiceCollectionExtension
+    {
+        public static IServiceCollection AddBehaviors(this IServiceCollection services)
+        {
+            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
+
+            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+
+            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
+
+            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(PublishDomainEventBehavior<,>));
+
+            return services;
+        }
+    }
+}
