@@ -36,7 +36,7 @@ try
 
     builder.Services.AddTaskManagerInfrastructure(builder.Configuration.GetSection("Infrastructure"));
 
-    builder.Services.AddInfrastructure(builder.Configuration.GetSection("Infrastructure"), name);
+    builder.Services.AddInfrastructure(builder.Configuration.GetSection("Infrastructure"), name, "v1");
 
     var app = builder.Build();
 

@@ -1,0 +1,14 @@
+version: '3.4'
+
+services:
+  identity.webapi:
+    image: telocompro/taskmanager.werbapi:${BUILDNUMBER}
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - Infrastructure__DbConnectionString=${CONNECTIONSTRING}
+    ports:
+      - "6007:80"
+    build:
+      context: .
+      dockerfile: src/TaskManager.WebApi/TaskManager.WebApi/Dockerfile

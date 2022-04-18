@@ -6,15 +6,19 @@ EXPOSE 80
 EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+
 WORKDIR /src
-COPY ["src/TaskManager.WebApi/TaskManager.WebApi.csproj", "src/TaskManager.WebApi/"]
-RUN dotnet restore "src/TaskManager.WebApi/TaskManager.WebApi.csproj"
-COPY . .
-WORKDIR "/src/src/TaskManager.WebApi"
-RUN dotnet build "TaskManager.WebApi.csproj" -c Release -o /app/build
+
+COPY /src/. .
+
+WORKDIR "/src/TaskManager.WebApi"
+
+RUN dotnet restore "TaskManager.WebApi.csproj"
+
+RUN dotnet build "TaskManager.WebApi.csproj" -c Release --no-restore
 
 FROM build AS publish
-RUN dotnet publish "TaskManager.WebApi.csproj" -c Release -o /app/publish
+RUN dotnet publish "TaskManager.WebApi.csproj" -c Release --no-restore --no-build -o /app/publish
 
 FROM base AS final
 WORKDIR /app
