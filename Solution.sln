@@ -30,12 +30,12 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F4AD570B-512B-43EE-B832-B9DBCE923595}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
-		.env = .env
-		docker-compose.yml = docker-compose.yml
 		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "build\_build.csproj", "{64F971A7-12F4-4618-ADA8-C132515DB47F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskManager.Events", "src\TaskManager.Events\TaskManager.Events.csproj", "{DD0AC821-044A-4382-B3F3-30FE0955DFF8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -85,6 +85,10 @@ Global
 		{19908076-DD7A-4758-B9EB-820E066161F6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{64F971A7-12F4-4618-ADA8-C132515DB47F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{64F971A7-12F4-4618-ADA8-C132515DB47F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD0AC821-044A-4382-B3F3-30FE0955DFF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD0AC821-044A-4382-B3F3-30FE0955DFF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD0AC821-044A-4382-B3F3-30FE0955DFF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD0AC821-044A-4382-B3F3-30FE0955DFF8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -100,6 +104,7 @@ Global
 		{E6F98760-48E9-4E64-863B-0671DF1066EF} = {0BB33785-7958-46C3-AB39-357A71364104}
 		{7C2CA7C3-0179-4B1A-AA7A-F6228C88FE96} = {B961311C-BF1D-4326-B71F-6117BE1DBC35}
 		{19908076-DD7A-4758-B9EB-820E066161F6} = {B961311C-BF1D-4326-B71F-6117BE1DBC35}
+		{DD0AC821-044A-4382-B3F3-30FE0955DFF8} = {B961311C-BF1D-4326-B71F-6117BE1DBC35}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E49686E3-55E2-4E07-A1FD-1A1E9C12F1F1}

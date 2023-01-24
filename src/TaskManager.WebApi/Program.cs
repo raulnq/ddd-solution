@@ -40,8 +40,6 @@ try
 
     var app = builder.Build();
 
-    app.Services.UseRebus();
-
     if (app.Environment.IsDevelopment())
     {
         app.UseDeveloperExceptionPage();

@@ -2,14 +2,16 @@
 
 ## Running locally
 
-docker run -d -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=Sample123$' -p 1433:1433 --name local-sql samuelmarks/mssql-server-fts-sqlpackage-linux
+Run the following command to prepare the development enviroment:
 
-docker run -d --hostname my-rabbit --name local-rabbit -p 5672:5672 -p 8080:15672 rabbitmq:3-management
+```
+nuke StartEnv
+```
 
-docker run -d --name local-jaeger -e COLLECTOR_ZIPKIN_HOST_PORT=:9411 -p 5775:5775/udp -p 6831:6831/udp -p 6832:6832/udp -p 5778:5778 -p 16686:16686 -p 14268:14268 -p 14250:14250 -p 9411:9411 jaegertracing/all-in-one:latest
+- **Jaeger UI**: http://localhost:16686/
+- **Seq**: http://localhost:5342/
+- **RabbitMQ**: http://localhost:15671/
 
-echo 'admin' | docker run --rm -i datalust/seq config hash
+Open the solution and run the `TaskManager.WebApi` project.
 
-mkdir -p seq
 
-docker run --name local-seq -d --restart unless-stopped -e ACCEPT_EULA=Y -e SEQ_FIRSTRUN_ADMINPASSWORDHASH="FJQJVTSpRudsDE9JslbRhkIJKf5wvUtkjQY0JnvVC7y2+f/IjA==" -v seq:/data -p 80:80 -p 5341:5341 datalust/seq

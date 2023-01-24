@@ -12,34 +12,17 @@ namespace Infrastructure
 
         private static readonly ILogger _logger = Log.Logger.ForContext<RebusEventPublisher>();
 
-        private ActionBlock<IEvent>? _actionBlock;
-
         public RebusEventPublisher(IBus bus)
         {
             _bus = bus;
         }
 
-        public Task Publish(IEvent @event)
+        public Task Publish(IEvent @event, IDictionary<string, string> headers = null)
         {
-            return _actionBlock!.SendAsync(@event);
+            return Send(@event, headers);
         }
 
-        public Task Stop()
-        {
-            _actionBlock!.Complete();
-
-            return _actionBlock.Completion;
-        }
-
-        public void Start()
-        {
-            _actionBlock = new ActionBlock<IEvent>(@event => Send(@event), new ExecutionDataflowBlockOptions
-            {
-                MaxDegreeOfParallelism = Environment.ProcessorCount,
-            });
-        }
-
-        private async Task Send(IEvent @event)
+        private async Task Send(IEvent @event, IDictionary<string, string> headers = null)
         {
             try
             {
@@ -47,7 +30,7 @@ namespace Infrastructure
 
                 _logger.ForContext("Event", @event, true).Debug("Publishing event {eventTypeName}", eventTypeName);
 
-                await _bus.Publish(@event);
+                await _bus.Publish(@event, headers);
             }
             catch (Exception ex)
             {

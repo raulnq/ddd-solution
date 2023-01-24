@@ -26,9 +26,13 @@ namespace Infrastructure
 
             services.AddSwagger(applicationName, applicationVersion);
 
-            services.AddTracing(configuration, applicationName, applicationVersion);
+            services.AddTracing(configuration);
+
+            services.AddLoggy(configuration);
 
             services.AddMemoryCache();
+
+            services.AddApplicationInsights(configuration);
 
             return services;
         }
@@ -37,33 +41,7 @@ namespace Infrastructure
         {
             services.AddQueryRunners(configuration, assembly);
 
-            return services;
-        }
-
-        public static IServiceCollection AddTracing(this IServiceCollection services, IConfiguration configuration, string applicationName, string applicationVersion)
-        {
-            var settings = configuration.GetSection("Jaeger").Get<JaegerSettings>();
-
-            if (settings == null)
-            {
-                return services;
-            }
-
-            services.AddOpenTelemetryTracing(builder =>
-            {
-                builder.AddJaegerExporter(o =>
-                {
-                    o.AgentPort = settings.Port;
-                    o.AgentHost = settings.Host;
-                })
-                .AddSource(applicationName)
-                .SetResourceBuilder(
-                    ResourceBuilder.CreateDefault()
-                        .AddService(serviceName: applicationName, serviceVersion: applicationVersion))
-                .AddHttpClientInstrumentation()
-                .AddSqlClientInstrumentation()
-                .AddAspNetCoreInstrumentation();
-            });
+            services.AddRebus(configuration, assembly);
 
             return services;
         }

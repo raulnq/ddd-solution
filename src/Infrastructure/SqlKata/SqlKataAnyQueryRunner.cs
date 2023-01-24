@@ -3,9 +3,9 @@ using SqlKata.Execution;
 
 namespace Infrastructure
 {
-    public abstract class SqlKataExistQueryRunner<TQuery> : SqlKataQueryRunner<TQuery, Any> where TQuery : Application.BaseQuery<Any>
+    public abstract class SqlKataAnyQueryRunner<TQuery> : SqlKataQueryRunner<TQuery, Any> where TQuery : BaseQuery<Any>
     {
-        protected SqlKataExistQueryRunner(QueryFactory queryFactory, DbSchema dbSchema) : base(queryFactory, dbSchema)
+        protected SqlKataAnyQueryRunner(QueryFactory queryFactory, DbSchema dbSchema) : base(queryFactory, dbSchema)
         {
         }
 

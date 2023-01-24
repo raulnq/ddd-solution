@@ -58,7 +58,7 @@ namespace Infrastructure
         {
             var aggregateRoots = ChangeTracker.Entries<AggregateRoot>().Select(entry => entry.Entity).ToList();
 
-            var events = aggregateRoots.SelectMany(aggregateRoot => aggregateRoot.Events);
+            var events = aggregateRoots.SelectMany(aggregateRoot => aggregateRoot.Events).ToArray();
 
             foreach (var aggregateRoot in aggregateRoots)
             {

@@ -13,6 +13,8 @@ using Rebus.Config;
 using Rebus.Serialization.Json;
 using Rebus.Pipeline;
 using Rebus.Pipeline.Receive;
+using static Dapper.SqlMapper;
+using Rebus.Bus;
 
 namespace Infrastructure
 {
@@ -51,62 +53,89 @@ namespace Infrastructure
             return services.AddTransient<IHandleMessages<TCommand>, CommandDispatcher<TCommand>>();
         }
 
-        public static IServiceCollection AddBus(this IServiceCollection services, IConfiguration configuration, Assembly assembly, Action<RebusSettings, TypeBasedRouterConfigurationBuilder>? map = null)
+        public static IServiceCollection AddRebus(this IServiceCollection services, IConfiguration configuration, Assembly assembly, Action<IConfiguration, TypeBasedRouterConfigurationBuilder>? map = null, Func<IBus, Task>? onCreated = null)
         {
-            var settings = configuration.GetSection("RebusSettings").Get<RebusSettings>();
+            var rebusConfig = configuration.GetSection("Rebus");
 
-            if (settings == null)
+            if (!rebusConfig.Exists())
             {
                 return services;
             }
 
-            services.AutoRegisterHandlersFromAssembly(assembly);
+            var rabbitmqConfig = configuration.GetSection("RabbitMQ");
 
-            services.AddSingleton(settings);
+            var serviceBusConfig = configuration.GetSection("AzureServiceBus");
 
-            services.AddSingleton<RebusEventPublisher>();
+            if (rabbitmqConfig.Exists() || serviceBusConfig.Exists())
+            {
+                var queue = rebusConfig.GetValue("Queue", "default");
 
-            services.AddSingleton<IEventPublisher, RebusEventPublisher>(provider => provider.GetRequiredService<RebusEventPublisher>());
+                services.AutoRegisterHandlersFromAssembly(assembly);
 
-            services.AddSingleton<ICommandSender, RebusCommandSender>();
+                services.AddSingleton<IEventPublisher, RebusEventPublisher>();
 
-            services.AddHostedService<EventPublisherBackgroundService>();
+                services.AddSingleton<ICommandSender, RebusCommandSender>();
 
-            var logger = Log.ForContext("queue", settings.Queue);
+                var logger = Log.ForContext("queue", queue);
 
-            services
-                .AddRebus(configurer =>
-                {
-                    return configurer
-                        .Logging(l => l.Serilog(logger))
-                        .Serialization(s => s.UseNewtonsoftJson(JsonInteroperabilityMode.PureJson))
-                        .Transport(t =>
-                        {
-                            t.UseRabbitMq(settings.ConnectionString, settings.Queue);
-                        })
-                        .Routing(r =>
-                        {
-                            if (map != null)
+                services
+                    .AddRebus(configurer =>
+                    {
+                        return configurer
+                            .Logging(l => l.Serilog(logger))
+                            .Serialization(s => s.UseNewtonsoftJson(JsonInteroperabilityMode.PureJson))
+                            .Transport(t =>
                             {
-                                map(settings, r.TypeBased());
-                            }
-                            else
-                            {
-                                r.TypeBased();
-                            }
-                        })
-                        .Options(o =>
-                        {
-                            o.Decorate<IPipeline>(c =>
-                            {
-                                var pipeline = c.Get<IPipeline>();
-                                var stepToInject = new MessageTracingStep();
+                                if (serviceBusConfig.Exists())
+                                {
+                                    var serviceBusConnectionString = serviceBusConfig["ConnectionString"];
 
-                                return new PipelineStepInjector(pipeline)
-                                    .OnReceive(stepToInject, PipelineRelativePosition.Before, typeof(DispatchIncomingMessageStep));
+                                    var automaticallyRenewPeekLock = serviceBusConfig.GetValue("AutomaticallyRenewPeekLock", false);
+
+                                    if (automaticallyRenewPeekLock)
+                                    {
+                                        t.UseAzureServiceBus(serviceBusConnectionString, queue).AutomaticallyRenewPeekLock();
+                                    }
+                                    else
+                                    {
+                                        t.UseAzureServiceBus(serviceBusConnectionString, queue);
+                                    }
+                                }
+                                if (rabbitmqConfig.Exists())
+                                {
+                                    var rabbitMqConnectionString = rabbitmqConfig["ConnectionString"];
+
+                                    t.UseRabbitMq(rabbitMqConnectionString, queue);
+                                }
+
+
+                            })
+                            .Routing(r =>
+                            {
+                                if (map != null)
+                                {
+                                    map(configuration, r.TypeBased());
+                                }
+                                else
+                                {
+                                    r.TypeBased();
+                                }
+                            })
+                            .Options(o =>
+                            {
+                                o.Decorate<IPipeline>(c =>
+                                {
+                                    var pipeline = c.Get<IPipeline>();
+                                    var stepToInject = new MessageTracingStep();
+
+                                    return new PipelineStepInjector(pipeline)
+                                        .OnReceive(stepToInject, PipelineRelativePosition.Before, typeof(DispatchIncomingMessageStep));
+                                });
                             });
-                        });
-                });
+                    }, onCreated: onCreated);
+            }
+
+
 
             return services;
         }

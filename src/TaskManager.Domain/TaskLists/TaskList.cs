@@ -1,4 +1,5 @@
 ﻿using Domain;
+using static TaskManager.Domain.TaskLists.DomainEvents;
 
 namespace TaskManager.Domain.TaskLists
 {
@@ -20,6 +21,12 @@ namespace TaskManager.Domain.TaskLists
             Name = name;
             Description = description;
             TaskListId = id;
+            AddEvent(new TaskListRegistered()
+            {
+                TaskListId = TaskListId.Value,
+                Name = Name,
+                Description = Description
+            });
         }
     }
 }

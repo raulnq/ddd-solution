@@ -49,7 +49,7 @@ namespace Infrastructure
         }
 
 
-        private static void ConfigureProblemDetails(ProblemDetailsOptions options)
+        private static void ConfigureProblemDetails(Hellang.Middleware.ProblemDetails.ProblemDetailsOptions options)
         {
             options.IncludeExceptionDetails = (_, _) => false;
 

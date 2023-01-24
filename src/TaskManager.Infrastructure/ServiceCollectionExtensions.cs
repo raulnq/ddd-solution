@@ -15,8 +15,6 @@ namespace TaskManager.Infrastructure
 
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
-            services.AddBus(configuration, typeof(ServiceCollectionExtensions).Assembly);
-
             return services;
         }
     }

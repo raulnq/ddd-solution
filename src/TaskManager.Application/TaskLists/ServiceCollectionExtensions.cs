@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Application;
+using Microsoft.Extensions.DependencyInjection;
+using TaskManager.Domain.TaskLists;
+using TaskManager.Events.TaskLists;
 
 namespace TaskManager.Application.TaskLists
 {
@@ -6,6 +9,8 @@ namespace TaskManager.Application.TaskLists
     {
         public static IServiceCollection AddTaskLists(this IServiceCollection services)
         {
+            services.AddEventDispatcher<DomainEvents.TaskListRegistered, TaskListRegistered>();
+
             return services;
         }
     }

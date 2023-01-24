@@ -3,8 +3,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SqlKata.Execution;
 using System.Reflection;
-using System.Data.SqlClient;
 using SqlKata.Compilers;
+using Microsoft.Data.SqlClient;
 
 namespace Infrastructure
 {
