@@ -13,7 +13,6 @@ using Rebus.Config;
 using Rebus.Serialization.Json;
 using Rebus.Pipeline;
 using Rebus.Pipeline.Receive;
-using static Dapper.SqlMapper;
 using Rebus.Bus;
 
 namespace Infrastructure

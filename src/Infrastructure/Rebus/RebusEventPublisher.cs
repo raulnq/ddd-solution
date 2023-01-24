@@ -2,7 +2,6 @@
 using Events;
 using Rebus.Bus;
 using Serilog;
-using System.Threading.Tasks.Dataflow;
 
 namespace Infrastructure
 {

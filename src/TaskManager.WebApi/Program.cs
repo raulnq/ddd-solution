@@ -1,7 +1,6 @@
 using Application;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
-using Rebus.Config;
 using Serilog;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -14,8 +13,6 @@ builder.Host.UseSerilog();
 
 try
 {
-    var name = $"Task Manager API ({Environment.GetEnvironmentVariable("RELEASE")})";
-
     Log.Information("Starting host");
 
     builder.Services.AddControllers()
@@ -30,13 +27,15 @@ try
         options.SuppressModelStateInvalidFilter = true;
     });
 
+    var infrastructureConfiguration = builder.Configuration.GetSection("Infrastructure");
+
     builder.Services.AddTaskManagerApplication();
 
     builder.Services.AddApplication();
 
-    builder.Services.AddTaskManagerInfrastructure(builder.Configuration.GetSection("Infrastructure"));
+    builder.Services.AddTaskManagerInfrastructure(infrastructureConfiguration);
 
-    builder.Services.AddInfrastructure(builder.Configuration.GetSection("Infrastructure"), name, "v1");
+    builder.Services.AddInfrastructure(infrastructureConfiguration);
 
     var app = builder.Build();
 
@@ -47,9 +46,7 @@ try
 
     app.UseHealthChecks();
 
-    app.UseSwagger();
-
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", name));
+    app.UseSwagger(infrastructureConfiguration);
 
     app.UseLocalization();
 
@@ -66,7 +63,7 @@ try
 
     app.UseRouting();
 
-    app.UseCors(app.Configuration.GetSection("Infrastructure"));
+    app.UseCors(infrastructureConfiguration);
 
     app.UseAuthorization();
 

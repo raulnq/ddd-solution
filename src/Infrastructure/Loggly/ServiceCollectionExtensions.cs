@@ -1,8 +1,4 @@
-﻿using Application;
-using Domain;
-using Loggly.Config;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
+﻿using Loggly.Config;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
