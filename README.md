@@ -6,6 +6,7 @@ Run the following command to prepare the development enviroment:
 
 ```
 nuke StartEnv
+nuke RunMigrator
 ```
 
 - **Jaeger UI**: http://localhost:16686/
