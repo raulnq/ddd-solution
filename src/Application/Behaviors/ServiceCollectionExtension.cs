@@ -11,9 +11,9 @@ namespace Application
 
             services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
-            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
-
             services.AddScoped(typeof(IPipelineBehavior<,>), typeof(PublishDomainEventBehavior<,>));
+
+            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
 
             return services;
         }

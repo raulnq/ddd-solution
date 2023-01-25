@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using Domain;
+using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
@@ -10,6 +11,8 @@ namespace Application
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
             services.AddBehaviors();
+
+            services.AddSingleton<IClock>(new SystemClock());
 
             return services;
         }

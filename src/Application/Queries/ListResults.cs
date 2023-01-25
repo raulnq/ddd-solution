@@ -23,6 +23,11 @@
             }
         }
 
+        public ListResults()
+        {
+
+        }
+
         public ListResults(ListQuery<T> query, int totalCount, IEnumerable<T> source)
         {
             Page = query.Page;
