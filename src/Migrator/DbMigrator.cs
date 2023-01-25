@@ -13,7 +13,6 @@ namespace Migrator
         public DbMigrator(Assembly assembly)
         {
             var configuration = new ConfigurationBuilder()
-                                .SetBasePath(Directory.GetCurrentDirectory())
                                 .AddJsonFile("appsettings.json", optional: true)
                                 .AddEnvironmentVariables()
                                 .AddUserSecrets(assembly)
