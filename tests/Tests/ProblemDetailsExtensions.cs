@@ -1,18 +1,19 @@
 ﻿using Shouldly;
+using System.Text.Json;
 
 namespace Tests
 {
     public static class ProblemDetailsExtensions
     {
-        public static void Check(this Microsoft.AspNetCore.Mvc.ProblemDetails problemDetails, string errorMessage)
+        public static void Check(this Microsoft.AspNetCore.Mvc.ProblemDetails problemDetails, string errorDetail)
         {
-            if (errorMessage == null)
+            if (errorDetail == null)
             {
                 problemDetails.ShouldBeSuccessful();
             }
             else
             {
-                problemDetails.ShouldThrowError(errorMessage);
+                problemDetails.ShouldThrowError(errorDetail);
             }
         }
 
@@ -21,11 +22,35 @@ namespace Tests
             problemDetails.ShouldBeNull();
         }
 
-        public static void ShouldThrowError(this Microsoft.AspNetCore.Mvc.ProblemDetails problemDetails, string errorMessage)
+        public static IDictionary<string, string[]> GetValidationErrors(this Microsoft.AspNetCore.Mvc.ProblemDetails problemDetails)
+        {
+            var errors = problemDetails.Extensions["errors"];
+
+            if (errors == null || string.IsNullOrEmpty(errors.ToString()))
+            {
+                return new Dictionary<string, string[]>();
+            }
+
+            return JsonSerializer.Deserialize<IDictionary<string, string[]>>(errors.ToString()!)!;
+        }
+
+        public static void ShouldThrowError(this Microsoft.AspNetCore.Mvc.ProblemDetails problemDetails, string errorDetail, IDictionary<string, string[]>? errors = null)
         {
             problemDetails.ShouldNotBeNull();
 
-            problemDetails.Detail.ShouldBe(errorMessage);
+            problemDetails.Detail.ShouldBe(errorDetail);
+
+            if (errors != null)
+            {
+                var validationErrors = problemDetails.GetValidationErrors();
+
+                foreach (var error in errors)
+                {
+                    validationErrors.ShouldContainKey(error.Key);
+
+                    error.Value.SequenceEqual(validationErrors[error.Key]).ShouldBeTrue("Error messages are not equal");
+                }
+            }
         }
     }
 }

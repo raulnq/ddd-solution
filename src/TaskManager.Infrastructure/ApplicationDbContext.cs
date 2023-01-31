@@ -1,4 +1,5 @@
-﻿using Infrastructure;
+﻿using Domain;
+using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
@@ -6,7 +7,7 @@ namespace TaskManager.Infrastructure
 {
     public class ApplicationDbContext : BaseDbContext
     {
-        public ApplicationDbContext(DbContextOptions options, DbSchema dbSchema) : base(options, dbSchema)
+        public ApplicationDbContext(DbContextOptions options, DbSchema dbSchema, IClock clock) : base(options, dbSchema, clock)
         {
         }
 

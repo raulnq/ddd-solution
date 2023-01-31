@@ -1,5 +1,4 @@
-﻿using System.Net;
-using TaskManager.Application.TaskLists;
+﻿using TaskManager.Application.TaskLists;
 using Bogus;
 using Shouldly;
 using Tests;
@@ -16,7 +15,7 @@ namespace TaskManager.Tests
             _httpDriver = httpDriver;
         }
 
-        public async Task<(RegisterTaskList.Command, RegisterTaskList.Result?)> Register(Action<RegisterTaskList.Command>? setup = null, string? errorMesage = null)
+        public async Task<(RegisterTaskList.Command, RegisterTaskList.Result?)> Register(Action<RegisterTaskList.Command>? setup = null, string? errorDetail = null, IDictionary<string, string[]>? errors = null)
         {
             var faker = new Faker<RegisterTaskList.Command>()
                 .RuleFor(command => command.Description, faker => faker.Lorem.Sentence())
@@ -28,7 +27,7 @@ namespace TaskManager.Tests
 
             var (status, result, error) = await _httpDriver.Post<RegisterTaskList.Command, RegisterTaskList.Result>("TaskLists", request);
 
-            (status, result, error).Check(errorMesage, assert: result =>
+            (status, result, error).Check(errorDetail, errors: errors, successAssert: result =>
             {
                 result.TaskListId.ShouldBeGreaterThan(0);
             });
@@ -36,7 +35,7 @@ namespace TaskManager.Tests
             return (request, result);
         }
 
-        public async Task<(ListTaskLists.Query, ListResults<ListTaskLists.Result>?)> List(Action<ListTaskLists.Query>? setup = null, string? errorMesage = null)
+        public async Task<(ListTaskLists.Query, ListResults<ListTaskLists.Result>?)> List(Action<ListTaskLists.Query>? setup = null, string? errorDetail = null)
         {
             var faker = new Faker<ListTaskLists.Query>()
                 .RuleFor(command => command.Name, faker => faker.Lorem.Word());
@@ -47,7 +46,7 @@ namespace TaskManager.Tests
 
             var (status, result, error) = await _httpDriver.Get<ListTaskLists.Query, ListResults<ListTaskLists.Result>>("TaskLists", request);
 
-            (status, result, error).Check(errorMesage, assert: result =>
+            (status, result, error).Check(errorDetail, successAssert: result =>
             {
                 result.TotalCount.ShouldBeGreaterThan(0);
             });

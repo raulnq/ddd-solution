@@ -12,16 +12,13 @@ namespace Infrastructure
 {
     public static partial class ServiceCollectionExtensions
     {
-        private static IServiceCollection AddLocalization(this IServiceCollection services)
+        private static IServiceCollection AddLocalization(this IServiceCollection services, Assembly assembly)
         {
             services.AddLocalization(options => options.ResourcesPath = "");
 
-            var resourceTypes = Assembly
-                                    .GetEntryAssembly()!
-                                    .GetReferencedAssemblies()
-                                    .Select(Assembly.Load)
-                                    .SelectMany(assemblies => assemblies.DefinedTypes)
-                                    .Where(type => typeof(ILocalizationResource).IsAssignableFrom(type) && type.AsType() != typeof(ILocalizationResource));
+            var resourceTypes = Assembly.Load(assembly.GetName())
+                                   .DefinedTypes
+                                   .Where(type => typeof(ILocalizationResource).IsAssignableFrom(type) && type.AsType() != typeof(ILocalizationResource));
 
             services.AddSingleton(serviceProvider =>
             {
@@ -35,7 +32,7 @@ namespace Infrastructure
                     {
                         if (resourceType is not null)
                         {
-                            var stringLocalizer = factory.Create(resourceType.GetTypeInfo().Name, resourceType.Assembly.FullName!);
+                            var stringLocalizer = factory.Create(resourceType.GetTypeInfo().AsType());
 
                             stringLocalizers.Add(stringLocalizer);
                         }

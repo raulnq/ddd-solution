@@ -16,12 +16,12 @@ namespace Infrastructure
             _bus = bus;
         }
 
-        public Task Publish(IEvent @event, IDictionary<string, string> headers = null)
+        public Task Publish(IEvent @event, IDictionary<string, string>? headers = null)
         {
             return Send(@event, headers);
         }
 
-        private async Task Send(IEvent @event, IDictionary<string, string> headers = null)
+        private async Task Send(IEvent @event, IDictionary<string, string>? headers = null)
         {
             try
             {

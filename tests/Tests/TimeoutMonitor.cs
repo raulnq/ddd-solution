@@ -23,7 +23,7 @@ namespace Tests
         {
             var cts = new CancellationTokenSource(timeout);
 
-            Exception lastException = null;
+            Exception? lastException = null;
 
             var task = taskFactory();
 

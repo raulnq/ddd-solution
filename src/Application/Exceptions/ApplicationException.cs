@@ -15,5 +15,13 @@ namespace Application
         public ApplicationException(string code, string description) : base(code, description)
         {
         }
+
+        public ApplicationException(Type type) : base(type.Name.Replace("Exception", ""))
+        {
+        }
+
+        public ApplicationException(Type type, object[] parameters) : base(type.Name.Replace("Exception", ""), parameters)
+        {
+        }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Domain;
 
-namespace Infrastructure
+namespace Domain
 {
     public class NotFoundException : BaseException
     {

@@ -10,10 +10,12 @@ namespace Infrastructure
     public class BaseDbContext : DbContext, IUnitOfWork, ISequence, IDomainEventSource
     {
         protected readonly DbSchema _dbSchema;
+        protected readonly IClock _clock;
 
-        public BaseDbContext(DbContextOptions options, DbSchema dbSchema) : base(options)
+        public BaseDbContext(DbContextOptions options, DbSchema dbSchema, IClock clock) : base(options)
         {
             _dbSchema = dbSchema;
+            _clock = clock;
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -26,9 +28,11 @@ namespace Infrastructure
             foreach (var entity in allEntities.Where(type => type.ClrType.IsAssignableTo(typeof(IAuditable))))
             {
                 entity.AddProperty("CreatedAt", typeof(DateTimeOffset));
-                entity.AddProperty("ModifiedAt", typeof(DateTimeOffset));
-                entity.AddProperty("ModifiedBy", typeof(string));
-                entity.AddProperty("CreatedBy", typeof(string));
+                entity.AddProperty("UpdatedAt", typeof(DateTimeOffset?));
+            }
+            foreach (var entity in allEntities.Where(type => type.ClrType.IsAssignableTo(typeof(IRemovable))))
+            {
+                entity.AddProperty("DeletedAt", typeof(DateTimeOffset?));
             }
             base.OnModelCreating(modelBuilder);
         }
@@ -38,18 +42,25 @@ namespace Infrastructure
             foreach (var entry in ChangeTracker.Entries<IAuditable>()
                 .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified))
             {
-                var today = DateTimeOffset.UtcNow;
-                //TODO: Get User Name
-                var user = "";
-
-                entry.Property("ModifiedAt").CurrentValue = today;
-                entry.Property("ModifiedBy").CurrentValue = user;
+                var today = _clock.Now;
 
                 if (entry.State == EntityState.Added)
                 {
                     entry.Property("CreatedAt").CurrentValue = today;
-                    entry.Property("CreatedBy").CurrentValue = user;
                 }
+                if (entry.State == EntityState.Modified)
+                {
+                    entry.Property("UpdatedAt").CurrentValue = today;
+                }
+            }
+
+            foreach (var entry in ChangeTracker.Entries<IRemovable>().Where(e => e.State == EntityState.Deleted))
+            {
+                var today = _clock.Now;
+
+                entry.Property("DeletedAt").CurrentValue = today;
+
+                entry.State = EntityState.Modified;
             }
             return base.SaveChangesAsync(cancellationToken);
         }

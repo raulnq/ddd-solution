@@ -31,7 +31,7 @@
             return _appDsl.TaskList.Register(command =>
             {
                 command.Name = null;
-            }, errorMesage: "ValidationErrorDetail");
+            }, errorDetail: "ValidationErrorDetail", new Dictionary<string, string[]> { { "name", new string[] { "Name no debería estar vacío." } } });
         }
 
         [Fact]
@@ -39,8 +39,8 @@
         {
             return _appDsl.TaskList.Register(command =>
             {
-                command.Name = null;
-            }, errorMesage: "ValidationErrorDetail");
+                command.Name = new string('*', 256); ;
+            }, errorDetail: "ValidationErrorDetail", new Dictionary<string, string[]> { { "name", new string[] { "MaximumLengthValidator" } } });
         }
     }
 }

@@ -15,8 +15,6 @@ namespace Infrastructure
 
             services.AddHealthChecks();
 
-            services.AddLocalization();
-
             services.AddProblemDetails(options => ConfigureProblemDetails(options));
 
             services.AddCors(configuration);
@@ -39,6 +37,8 @@ namespace Infrastructure
             services.AddQueryRunners(configuration, assembly);
 
             services.AddRebus(configuration, assembly);
+
+            services.AddLocalization(assembly);
 
             return services;
         }

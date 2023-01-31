@@ -100,14 +100,15 @@ namespace Infrastructure
                                         t.UseAzureServiceBus(serviceBusConnectionString, queue);
                                     }
                                 }
-                                if (rabbitmqConfig.Exists())
+                                else
                                 {
-                                    var rabbitMqConnectionString = rabbitmqConfig["ConnectionString"];
+                                    if (rabbitmqConfig.Exists())
+                                    {
+                                        var rabbitMqConnectionString = rabbitmqConfig["ConnectionString"];
 
-                                    t.UseRabbitMq(rabbitMqConnectionString, queue);
+                                        t.UseRabbitMq(rabbitMqConnectionString, queue);
+                                    }
                                 }
-
-
                             })
                             .Routing(r =>
                             {

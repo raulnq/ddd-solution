@@ -23,27 +23,25 @@ namespace Infrastructure
                 {
                     loggerConfiguration.WriteTo.Loggly();
                 }
-
-                var seqConfig = context.Configuration.GetSection("Infrastructure").GetSection("Seq");
-
-                if (seqConfig.Exists())
+                else
                 {
-                    var seqUrl = seqConfig["Url"];
+                    var seqConfig = context.Configuration.GetSection("Infrastructure").GetSection("Seq");
 
-                    loggerConfiguration.WriteTo.Seq(seqUrl);
+                    if (seqConfig.Exists())
+                    {
+                        var seqUrl = seqConfig["Url"];
+
+                        loggerConfiguration.WriteTo.Seq(seqUrl!);
+                    }
                 }
 
                 var sentryConfig = context.Configuration.GetSection("Sentry");
 
                 if (sentryConfig.Exists())
                 {
-                    var seqUrl = seqConfig["Url"];
+                    var seqUrl = sentryConfig["Url"];
 
-                    loggerConfiguration.WriteTo.Sentry(s =>
-                    {
-                        s.MinimumBreadcrumbLevel = LogEventLevel.Debug;
-                        s.MinimumEventLevel = LogEventLevel.Error;
-                    });
+                    loggerConfiguration.WriteTo.Sentry();
                 }
 
                 loggerConfiguration.ReadFrom.Configuration(context.Configuration);

@@ -16,6 +16,15 @@ namespace Infrastructure
                 return services;
             }
 
+            var appInsightsConfig = configuration.GetSection("ApplicationInsights");
+
+            if (config.Exists())
+            {
+                return services;
+            }
+
+            AppContext.SetSwitch("Azure.Experimental.EnableActivitySource", true);
+
             var port = config.GetValue("Port", 6831);
 
             var host = config.GetValue("Host", "localhost");
@@ -31,7 +40,7 @@ namespace Infrastructure
                     o.AgentPort = port;
                     o.AgentHost = host;
                 })
-                .AddSource(serviceName)
+                .AddSource("*")
                 .SetResourceBuilder(
                     ResourceBuilder.CreateDefault()
                         .AddService(serviceName: serviceName, serviceVersion: serviceVersion))

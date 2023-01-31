@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Hellang.Middleware.ProblemDetails;
 using Microsoft.AspNetCore.Builder;
 
 namespace Infrastructure

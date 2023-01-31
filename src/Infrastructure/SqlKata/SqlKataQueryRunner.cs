@@ -1,4 +1,5 @@
 ﻿using Application;
+using Domain;
 using SqlKata;
 using SqlKata.Execution;
 

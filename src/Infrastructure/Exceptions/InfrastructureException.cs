@@ -15,5 +15,13 @@ namespace Infrastructure
         public InfrastructureException(string code) : base(code)
         {
         }
+
+        public InfrastructureException(Type type) : base(type.Name.Replace("Exception", ""))
+        {
+        }
+
+        public InfrastructureException(Type type, object[] parameters) : base(type.Name.Replace("Exception", ""), parameters)
+        {
+        }
     }
 }
