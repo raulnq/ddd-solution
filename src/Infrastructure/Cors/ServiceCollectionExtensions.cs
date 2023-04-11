@@ -9,7 +9,7 @@ namespace Infrastructure
         {
             var corsSection = configuration.GetSection("Cors");
 
-            if (corsSection == null)
+            if (!corsSection.Exists())
             {
                 return services;
             }
@@ -20,7 +20,7 @@ namespace Infrastructure
                 {
                     var origins = item.Get<string[]>();
 
-                    options.AddPolicy(item.Key, builder => builder.WithOrigins(origins).AllowAnyMethod().AllowAnyHeader());
+                    options.AddPolicy(item.Key, builder => builder.WithOrigins(origins!).AllowAnyMethod().AllowAnyHeader());
                 }
             });
         }

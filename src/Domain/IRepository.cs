@@ -11,5 +11,7 @@
         void Remove(T entity);
 
         Task<int> GetNextValue();
+
+        Task<long> GetNextLongValue();
     }
 }

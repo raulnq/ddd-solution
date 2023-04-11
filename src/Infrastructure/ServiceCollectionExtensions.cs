@@ -9,6 +9,8 @@ namespace Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
+            var infrastructureConfiguration = configuration.GetSection("Infrastructure");
+
             services.AddOptions();
 
             services.AddHttpContextAccessor();
@@ -17,13 +19,15 @@ namespace Infrastructure
 
             services.AddProblemDetails(options => ConfigureProblemDetails(options));
 
-            services.AddCors(configuration);
+            services.AddAuthentication(infrastructureConfiguration);
 
-            services.AddSwagger(configuration);
+            services.AddCors(infrastructureConfiguration);
 
-            services.AddTracing(configuration);
+            services.AddSwagger(infrastructureConfiguration);
 
-            services.AddLoggy(configuration);
+            services.AddTracing(infrastructureConfiguration);
+
+            services.AddLoggy(infrastructureConfiguration);
 
             services.AddMemoryCache();
 

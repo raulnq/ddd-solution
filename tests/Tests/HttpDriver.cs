@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using Infrastructure;
+using System.Net;
 using System.Web;
 
 namespace Tests
@@ -7,22 +8,34 @@ namespace Tests
     {
         public readonly IHttpClienFactory _factory;
 
-        public HttpDriver(IHttpClienFactory factory)
+        private readonly string _apiKey;
+
+        public HttpDriver(IHttpClienFactory factory, string apiKey)
         {
             _factory = factory;
+            _apiKey = apiKey;
+        }
+
+        public HttpClient CreateAuthenticatedClient()
+        {
+            var client = _factory.CreateClient();
+
+            client.DefaultRequestHeaders.Add(ServiceCollectionExtensions.KeyName, _apiKey);
+
+            return client;
         }
 
         public Task<(HttpStatusCode StatusCode, TResponse? Response, Microsoft.AspNetCore.Mvc.ProblemDetails? Error)> Post<TRequest, TResponse>(string requestUri, TRequest request)
             where TResponse : class
         {
-            var client = _factory.CreateClient();
+            var client = CreateAuthenticatedClient();
 
             return client.Post<TRequest, TResponse>(requestUri, request);
         }
 
         public Task<(HttpStatusCode StatusCode, Microsoft.AspNetCore.Mvc.ProblemDetails? Error)> Post<TRequest>(string requestUri, TRequest request)
         {
-            var client = _factory.CreateClient();
+            var client = CreateAuthenticatedClient();
 
             return client.Post<TRequest>(requestUri, request);
         }
@@ -30,21 +43,21 @@ namespace Tests
         public Task<(HttpStatusCode StatusCode, TResponse? Response, Microsoft.AspNetCore.Mvc.ProblemDetails? Error)> Put<TRequest, TResponse>(string requestUri, TRequest request)
             where TResponse : class
         {
-            var client = _factory.CreateClient();
+            var client = CreateAuthenticatedClient();
 
             return client.Put<TRequest, TResponse>(requestUri, request);
         }
 
         public Task<(HttpStatusCode StatusCode, Microsoft.AspNetCore.Mvc.ProblemDetails? Error)> Put<TRequest>(string requestUri, TRequest request)
         {
-            var client = _factory.CreateClient();
+            var client = CreateAuthenticatedClient();
 
             return client.Put<TRequest>(requestUri, request);
         }
 
         public Task<(HttpStatusCode StatusCode, Microsoft.AspNetCore.Mvc.ProblemDetails? Error)> Delete(string requestUri)
         {
-            var client = _factory.CreateClient();
+            var client = CreateAuthenticatedClient();
 
             return client.Delete(requestUri);
         }
@@ -52,7 +65,7 @@ namespace Tests
         public Task<(HttpStatusCode StatusCode, TResponse? Response, Microsoft.AspNetCore.Mvc.ProblemDetails? Error)> Get<TRequest, TResponse>(string requestUri, TRequest request)
             where TResponse : class
         {
-            var client = _factory.CreateClient();
+            var client = CreateAuthenticatedClient();
 
             var uriBuilder = new UriBuilder($"host/{requestUri.TrimStart('/')}");
             var query = HttpUtility.ParseQueryString(uriBuilder.Query);

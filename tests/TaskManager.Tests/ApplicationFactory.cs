@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Domain;
 using Tests;
+using Infrastructure;
 
 namespace TaskManager.Tests
 {
@@ -16,6 +17,8 @@ namespace TaskManager.Tests
         }
 
         public FixedClock Clock { get; set; } = null!;
+
+        public ApiKeySettings ApiKeys { get; set; } = null!;
 
         protected override IHost CreateHost(IHostBuilder builder)
         {
@@ -35,6 +38,8 @@ namespace TaskManager.Tests
             {
                 services.RemoveAll<IClock>();
                 services.AddSingleton<IClock>(Clock);
+                services.RemoveAll<ApiKeySettings>();
+                services.AddSingleton(ApiKeys);
             });
         }
     }

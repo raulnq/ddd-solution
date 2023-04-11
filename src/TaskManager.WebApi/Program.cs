@@ -27,15 +27,13 @@ try
         options.SuppressModelStateInvalidFilter = true;
     });
 
-    var infrastructureConfiguration = builder.Configuration.GetSection("Infrastructure");
-
     builder.Services.AddTaskManagerApplication();
 
     builder.Services.AddApplication();
 
-    builder.Services.AddTaskManagerInfrastructure(infrastructureConfiguration);
+    builder.Services.AddTaskManagerInfrastructure(builder.Configuration);
 
-    builder.Services.AddInfrastructure(infrastructureConfiguration);
+    builder.Services.AddInfrastructure(builder.Configuration);
 
     var app = builder.Build();
 
@@ -46,7 +44,7 @@ try
 
     app.UseHealthChecks();
 
-    app.UseSwagger(infrastructureConfiguration);
+    app.UseSwagger(builder.Configuration);
 
     app.UseLocalization();
 
@@ -63,7 +61,9 @@ try
 
     app.UseRouting();
 
-    app.UseCors(infrastructureConfiguration);
+    app.UseCors(builder.Configuration);
+
+    app.UseAuthentication();
 
     app.UseAuthorization();
 

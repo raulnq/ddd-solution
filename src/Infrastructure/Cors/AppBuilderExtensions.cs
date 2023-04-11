@@ -7,7 +7,9 @@ namespace Infrastructure
     {
         public static IApplicationBuilder UseCors(this IApplicationBuilder app, IConfiguration configuration)
         {
-            var corsSection = configuration.GetSection("Cors");
+            var infrastructureConfiguration = configuration.GetSection("Infrastructure");
+
+            var corsSection = infrastructureConfiguration.GetSection("Cors");
 
             if (corsSection == null)
             {

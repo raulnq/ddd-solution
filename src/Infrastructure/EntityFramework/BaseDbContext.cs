@@ -98,6 +98,25 @@ namespace Infrastructure
             return (int)result.Value;
         }
 
+        public async Task<long> GetNextLongValue<T>()
+        {
+            var result = new SqlParameter("@result", SqlDbType.BigInt)
+            {
+                Direction = ParameterDirection.Output
+            };
+
+            var query = $"SELECT @result = (NEXT VALUE FOR {typeof(T).Name}_Sequence)";
+
+            if (!string.IsNullOrEmpty(_dbSchema.Name))
+            {
+                query = $"SELECT @result = (NEXT VALUE FOR [{_dbSchema.Name}].[{typeof(T).Name}_Sequence])";
+            }
+
+            await base.Database.ExecuteSqlRawAsync(query, result);
+
+            return (long)result.Value;
+        }
+
         public IDbContextTransaction? CurrentTransaction { get; private set; }
 
         public async Task BeginTransaction()

@@ -19,6 +19,11 @@ namespace Infrastructure
             return _context.GetNextValue<T>();
         }
 
+        public Task<long> GetNextLongValue()
+        {
+            return _context.GetNextLongValue<T>();
+        }
+
         public void Add(T entity)
         {
             _context.Set<T>().Add(entity);

@@ -1,4 +1,5 @@
-﻿using Tests;
+﻿using Infrastructure;
+using Tests;
 
 namespace TaskManager.Tests
 {
@@ -12,10 +13,11 @@ namespace TaskManager.Tests
 
             _applicationFactory = new ApplicationFactory
             {
-                Clock = clock
+                Clock = clock,
+                ApiKeys = new ApiKeySettings { { "fake-api-key", "Admin" } }
             };
 
-            var httpDriver = new HttpDriver(_applicationFactory);
+            var httpDriver = new HttpDriver(_applicationFactory, "fake-api-key");
 
             TaskList = new TaskListDsl(httpDriver);
         }
